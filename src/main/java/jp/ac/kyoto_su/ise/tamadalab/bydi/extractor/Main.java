@@ -1,31 +1,25 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.extractor;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.jar.JarFile;
+import java.util.Optional;
 
 public class Main {
     public void run(String[] args) {
+        OpcodeExtractor extractor = new OpcodeExtractor();
         Arrays.stream(args)
-        .forEach(this::extract);
+        .map(arg -> extractor.extract(arg))
+        .forEach(pool -> printPool(pool));
     }
 
-    private void extract(String path) {
-        try {
-            extractImpl(path);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+    private void printPool(Optional<DataPool> pool) {
+        pool.ifPresent(store -> printAll(store));
     }
 
-    private void extractImpl(String path) throws IOException {
-        try(JarFile jarfile = new JarFile(path)){
-            OpcodeExtractor extractor = new OpcodeExtractor();
-            jarfile.stream()
-            .map(entry -> entry.getName())
-            .filter(name -> name.endsWith(".class"))
-            .forEach(className -> extractor.extract(path, className));
-        }
+    private void printAll(DataPool pool) {
+        pool.stream()
+        .map(m -> String.format("%s,%s,%s,%d,%s",
+                m.className(), m.methodName(), m.signature(), m.opcodeLength(), m.opcodesString()))
+        .forEach(System.out::println);
     }
 
     public static void main(String[] args) {
