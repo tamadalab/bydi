@@ -1,12 +1,19 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.extractor;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-public class Main {
-    public void run(String[] args) {
+import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Arguments;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Processor;
+
+public class ExtractionProcessor implements Processor {
+    public Arguments buildArguments() {
+        return new ExtractionArguments();
+    }
+
+    @Override
+    public void perform(Arguments args) {
         OpcodeExtractor extractor = new OpcodeExtractor();
-        Arrays.stream(args)
+        args.stream()
         .map(arg -> extractor.extract(arg))
         .forEach(pool -> printPool(pool));
     }
@@ -22,8 +29,8 @@ public class Main {
         .forEach(System.out::println);
     }
 
-    public static void main(String[] args) {
-        Main extractor = new Main();
-        extractor.run(args);
+    public static void main(String[] args) throws Exception {
+        ExtractionProcessor extractor = new ExtractionProcessor();
+        extractor.perform(extractor.parse(args));
     }
 }

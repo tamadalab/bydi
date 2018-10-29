@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.parser;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,11 +8,13 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import jp.ac.kyoto_su.ise.tamadalab.bydi.comparator.DataPoolBuilder;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.DataStore;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.Method;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.MethodInfo;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.DataPool;
 
-public class CsvDataParser implements BydiProcessor {
+public class CsvDataParser implements DataPoolBuilder {
     @Override
     public Optional<DataPool> extract(String file) {
         try{
@@ -36,7 +38,7 @@ public class CsvDataParser implements BydiProcessor {
         // System.out.printf("%d,%s%n", items.length, line);
         int count = Integer.valueOf(items[3]);
         String bytecode = count == 0? "": items[4];
-        return new Method(items[0], items[1], items[2],
+        return new Method(new MethodInfo(items[0], items[1], items[2]),
                 Optional.ofNullable(bytecode(bytecode)));
     }
 

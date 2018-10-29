@@ -1,6 +1,7 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.algorithms;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.stream.IntStream;
@@ -24,7 +25,7 @@ public class EditDistanceCalculatorTest {
 
     @Test
     public void testBasic() {
-        assertThat(calculator.calculate(stringToIntArray("other"), stringToIntArray("mother")), is(1));
+        assertThat(calculator.calculate(stringToIntArray("other"), stringToIntArray("mother")), is(closeTo(1, 1E-5)));
     }
 
     @Test

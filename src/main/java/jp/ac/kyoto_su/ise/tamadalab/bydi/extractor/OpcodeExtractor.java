@@ -13,10 +13,10 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.InstructionList;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.BydiProcessor;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.comparator.DataPoolBuilder;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.DataStore;
 
-public class OpcodeExtractor implements BydiProcessor {
+public class OpcodeExtractor implements DataPoolBuilder {
     @Override
     public Optional<DataPool> extract(String path) {
         try {

@@ -43,7 +43,7 @@ public class DataStore implements DataPool {
 
     private boolean throwIfFound(List<Method> methods, Method method) {
         if(findFromList(methods, method.methodName(), method.signature()).isPresent())
-            throw new MultipleDataException(method);
+            throw new MultipleDataException(method.info);
         return true;
     }
 

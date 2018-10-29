@@ -7,7 +7,7 @@ public class MultipleDataException extends RuntimeException {
         super(String.format("method duplicate: %s#%s(%s)", className, methodName, signature));
     }
 
-    public MultipleDataException(Method m) {
+    public MultipleDataException(MethodInfo m) {
         this(m.className, m.methodName, m.signature);
     }
 }

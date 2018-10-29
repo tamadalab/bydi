@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.algorithms;
 
 class Table {
     private int[][] tables;

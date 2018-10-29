@@ -6,42 +6,45 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Method {
-    String className;
-    String methodName;
-    String signature;
+    MethodInfo info;
     Optional<int[]> opcodes;
 
-    public Method(String className, String methodName, String signature, Optional<int[]> opcodes) {
-        this.className = className;
-        this.methodName = methodName;
-        this.signature = signature;
+    public Method(MethodInfo info, Optional<int[]> opcodes) {
+        this.info = info;
         this.opcodes = opcodes;
     }
 
     public boolean match(Method otherMethod) {
-        return match(otherMethod.methodName,
-                otherMethod.signature);
+        return match(otherMethod.info);
+    }
+
+    public boolean match(MethodInfo otherInfo) {
+        return match(otherInfo.methodName, otherInfo.signature);
     }
 
     public boolean match(String givenMethodName, String givenSignature) {
-        return Objects.equals(this.methodName, givenMethodName)
-                && Objects.equals(signature, givenSignature);
+        return Objects.equals(info.methodName(), givenMethodName)
+                && Objects.equals(info.signature(), givenSignature);
     }
 
     public int[] opcodes() {
         return opcodes.orElseGet(() -> new int[0]);
     }
 
+    public MethodInfo info() {
+        return info;
+    }
+
     public String className() {
-        return className;
+        return info.className();
     }
 
     public String methodName() {
-        return methodName;
+        return info.methodName();
     }
 
     public String signature() {
-        return signature;
+        return info.signature();
     }
 
     public int opcodeLength() {
@@ -50,8 +53,7 @@ public class Method {
     }
 
     public String toString() {
-        return String.format("%s,%s,%s,%d,%s",
-                className, methodName, signature, opcodeLength(), opcodesString());
+        return String.format("%s,%d,%s", info, opcodeLength(), opcodesString());
     }
 
     public String opcodesString() {
