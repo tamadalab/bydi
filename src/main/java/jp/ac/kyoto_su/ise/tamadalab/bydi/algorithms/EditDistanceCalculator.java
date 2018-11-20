@@ -1,9 +1,9 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.algorithms;
 
 import java.util.stream.IntStream;
 
-public class EditDistanceCalculator {
-    public int calculate(int[] data1, int[] data2) {
+public class EditDistanceCalculator implements DistanceCalculator {
+    public double calculate(int[] data1, int[] data2) {
         Table table = init(data1, data2);
         for(int i = 1; i <= data1.length; i++) {
             for(int j = 1; j <= data2.length; j++) {
@@ -23,7 +23,7 @@ public class EditDistanceCalculator {
     }
 
     private Table init(int[] data1, int[] data2) {
-        Table table = new Table(data1.length + 1, data2.length + 2);
+        Table table = new Table(data1.length + 1, data2.length + 1);
         IntStream.rangeClosed(0, data1.length)
         .forEach(index -> table.set(index, index, 0));
         IntStream.rangeClosed(0, data2.length)

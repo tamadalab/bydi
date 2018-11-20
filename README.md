@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/tamadalab/bydi.svg?branch=master)](https://travis-ci.com/tamadalab/bydi)
+
 # bydi
 
 The product aims to understand how to obfuscate the bytecode.
@@ -15,7 +17,7 @@ Then, we obtain two csv files (typically, before and after obfuscation).
 The differences are printed by the following command.
 
 ```sh
-$ java -jar target/bydi-1.0-SNAPSHOT.jar <CSV1> <CSV2>
+$ java -jar target/bydi-1.0-SNAPSHOT.jar <CSV1|JAR1> <CSV2|JAR1>
 ```
 
 `bydi` prints the bytecode distance between the two methods.
