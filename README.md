@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/tamadalab/bydi.svg?branch=master)](https://travis-ci.com/tamadalab/bydi)
+
 # bydi
 
 The product aims to understand how to obfuscate the bytecode.
