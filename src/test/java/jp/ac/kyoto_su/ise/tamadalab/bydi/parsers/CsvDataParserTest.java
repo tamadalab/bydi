@@ -1,11 +1,11 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.parser;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.parsers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.parser.CsvDataParser;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.parsers.CsvDataParser;
 
 public class CsvDataParserTest {
     private CsvDataParser parser = new CsvDataParser();

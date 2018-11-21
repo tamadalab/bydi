@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.comparator.ComparisonProcessor;
-import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.ExtractionProcessor;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.comparators.ComparisonProcessor;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.extractors.ExtractionProcessor;
 
 public class ProcessorBuilder {
     private Map<String, Processor> processors = new HashMap<>();

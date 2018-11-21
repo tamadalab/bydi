@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.comparator;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.comparators;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import jp.ac.kyoto_su.ise.tamadalab.bydi.algorithms.DistanceCalculatorBuilder;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Arguments;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Processor;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.Method;
-import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.DataPool;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.extractors.DataPool;
 
 public class ComparisonProcessor implements Processor {
 
@@ -21,21 +21,28 @@ public class ComparisonProcessor implements Processor {
     @Override
     public void perform(Arguments args) {
         List<DataPool> pools = readData(args);
+        Mapper mapper = constructMapper(args);
         DistanceCalculator calculator = buildDistanceCalculator(args);
-        printAll(pools, calculator);
+        printAll(pools, calculator, mapper);
     }
 
-    private void printAll(List<DataPool> pools, DistanceCalculator calculator) {
-        printAll(pools.get(0), pools.get(1), calculator);
+    private Mapper constructMapper(Arguments args) {
+        return new MapperFactory()
+                .build(args.get("mapper"));
     }
 
-    private void printAll(DataPool original, DataPool obfuscated, DistanceCalculator calculator) {
+    private void printAll(List<DataPool> pools, DistanceCalculator calculator, Mapper mapper) {
+        printAll(pools.get(0), pools.get(1), calculator, mapper);
+    }
+
+    private void printAll(DataPool original, DataPool obfuscated, DistanceCalculator calculator, Mapper mapper) {
         original.stream()
-        .forEach(data -> calculateAndPrint(data, obfuscated, calculator));        
+        .forEach(data -> calculateAndPrint(data, obfuscated, calculator, mapper));        
     }
 
-    private void calculateAndPrint(Method data1, DataPool obfuscated, DistanceCalculator calculator) {
-        Optional<Method> data2 = obfuscated.find(data1.className(), data1.methodName(), data1.signature());
+    private void calculateAndPrint(Method data1, DataPool obfuscated,
+            DistanceCalculator calculator, Mapper mapper) {
+        Optional<Method> data2 = mapper.find(data1.info(), obfuscated);
         data2.ifPresentOrElse(d2 -> print(data1, d2, calculator.calculate(data1.opcodes(), d2.opcodes())),
                 () -> printNotFound(data1));
     }

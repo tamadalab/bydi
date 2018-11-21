@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.DataPool;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.extractors.DataPool;
 
 public class DataStore implements DataPool {
     private Map<String, List<Method>> pool = new HashMap<>();
@@ -38,18 +38,18 @@ public class DataStore implements DataPool {
     @Override
     public Optional<Method> find(String className, String methodName, String signature) {
         List<Method> poolList = pool.getOrDefault(className, new ArrayList<>());
-        return findFromList(poolList, methodName, signature);
+        return findFromList(poolList, new MethodInfo(className, methodName, signature));
     }
 
     private boolean throwIfFound(List<Method> methods, Method method) {
-        if(findFromList(methods, method.methodName(), method.signature()).isPresent())
+        if(findFromList(methods, method.info()).isPresent())
             throw new MultipleDataException(method.info);
         return true;
     }
 
-    private Optional<Method> findFromList(List<Method> methods, String methodName, String signature) {
+    private Optional<Method> findFromList(List<Method> methods, MethodInfo method) {
         return methods.stream()
-                .filter(m -> m.match(methodName, signature))
+                .filter(m -> m.match(method))
                 .findFirst();
     }
 

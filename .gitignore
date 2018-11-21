@@ -1,4 +1,4 @@
-### https://raw.github.com/github/gitignore/c68eb91e0a72ca1efba128c33de9caea41281f19/Java.gitignore
+### https://raw.github.com/github/gitignore/4a8e0a151becd5ccbb83e4aca6e6c195f3d506fd/Java.gitignore
 
 # Compiled class file
 *.class
@@ -25,7 +25,7 @@
 hs_err_pid*
 
 
-### https://raw.github.com/github/gitignore/c68eb91e0a72ca1efba128c33de9caea41281f19/Maven.gitignore
+### https://raw.github.com/github/gitignore/4a8e0a151becd5ccbb83e4aca6e6c195f3d506fd/Maven.gitignore
 
 target/
 pom.xml.tag
@@ -39,7 +39,7 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 
-### https://raw.github.com/github/gitignore/c68eb91e0a72ca1efba128c33de9caea41281f19/Global/JEnv.gitignore
+### https://raw.github.com/github/gitignore/4a8e0a151becd5ccbb83e4aca6e6c195f3d506fd/Global/JEnv.gitignore
 
 # JEnv local Java version configuration file
 .java-version
@@ -48,7 +48,7 @@ buildNumber.properties
 .jenv-version
 
 
-### https://raw.github.com/github/gitignore/c68eb91e0a72ca1efba128c33de9caea41281f19/Global/Eclipse.gitignore
+### https://raw.github.com/github/gitignore/4a8e0a151becd5ccbb83e4aca6e6c195f3d506fd/Global/Eclipse.gitignore
 
 
 .metadata
@@ -108,7 +108,7 @@ local.properties
 .worksheet
 
 
-### https://raw.github.com/github/gitignore/c68eb91e0a72ca1efba128c33de9caea41281f19/Global/macOS.gitignore
+### https://raw.github.com/github/gitignore/4a8e0a151becd5ccbb83e4aca6e6c195f3d506fd/Global/macOS.gitignore
 
 # General
 .DS_Store
@@ -138,7 +138,7 @@ Temporary Items
 .apdisk
 
 
-### https://raw.github.com/github/gitignore/c68eb91e0a72ca1efba128c33de9caea41281f19/Global/Emacs.gitignore
+### https://raw.github.com/github/gitignore/4a8e0a151becd5ccbb83e4aca6e6c195f3d506fd/Global/Emacs.gitignore
 
 # -*- mode: gitignore; -*-
 *~
@@ -185,5 +185,9 @@ flycheck_*.el
 
 # directory configuration
 .dir-locals.el
+
+# network security
+/network-security.data
+
 
 

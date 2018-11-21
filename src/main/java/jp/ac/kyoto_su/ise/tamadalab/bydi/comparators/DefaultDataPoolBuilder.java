@@ -1,10 +1,10 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.comparator;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.comparators;
 
 import java.util.Optional;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.DataPool;
-import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.OpcodeExtractor;
-import jp.ac.kyoto_su.ise.tamadalab.bydi.parser.CsvDataParser;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.extractors.DataPool;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.extractors.OpcodeExtractor;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.parsers.CsvDataParser;
 
 public class DefaultDataPoolBuilder implements DataPoolBuilder {
     private CsvDataParser parser = new CsvDataParser();

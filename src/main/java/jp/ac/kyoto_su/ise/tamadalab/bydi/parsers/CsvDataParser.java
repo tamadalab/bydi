@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.parser;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.parsers;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,11 +8,11 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.comparator.DataPoolBuilder;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.comparators.DataPoolBuilder;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.DataStore;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.Method;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.MethodInfo;
-import jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.DataPool;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.extractors.DataPool;
 
 public class CsvDataParser implements DataPoolBuilder {
     @Override

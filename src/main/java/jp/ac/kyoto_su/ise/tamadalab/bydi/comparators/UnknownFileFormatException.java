@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.comparator;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.comparators;
 
 public class UnknownFileFormatException extends RuntimeException {
     private static final long serialVersionUID = -823134390805584098L;

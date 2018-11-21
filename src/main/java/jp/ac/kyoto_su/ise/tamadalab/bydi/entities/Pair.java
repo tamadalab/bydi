@@ -1,5 +1,6 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.entities;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -23,5 +24,16 @@ public class Pair<L, R> {
 
     public boolean test(BiPredicate<L, R> predicate) {
         return predicate.test(left, right);
+    }
+
+    public int hashCode() {
+        return Objects.hash(getClass(), left, right);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public boolean equals(Object other) {
+        return Objects.equals(getClass(), other.getClass())
+                && Objects.equals(left, ((Pair)other).left)
+                && Objects.equals(right, ((Pair)other).right);
     }
 }

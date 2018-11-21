@@ -18,13 +18,8 @@ public class Method {
         return match(otherMethod.info);
     }
 
-    public boolean match(MethodInfo otherInfo) {
-        return match(otherInfo.methodName, otherInfo.signature);
-    }
-
-    public boolean match(String givenMethodName, String givenSignature) {
-        return Objects.equals(info.methodName(), givenMethodName)
-                && Objects.equals(info.signature(), givenSignature);
+    public boolean match(MethodInfo givenInfo) {
+        return Objects.equals(info, givenInfo);
     }
 
     public int[] opcodes() {

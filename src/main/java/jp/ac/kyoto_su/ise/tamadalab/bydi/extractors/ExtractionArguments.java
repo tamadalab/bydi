@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.extractor;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.extractors;
 
 import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Arguments;
 

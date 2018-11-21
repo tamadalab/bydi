@@ -10,14 +10,14 @@ At first, we should extract bytecodes list from jar file, like below.
 After typing the below command, the product print bytecode list of each method to standard output by the csv formats.
 
 ```sh
-$ java -cp target/bydi-1.0-SNAPSHOT.jar jp.ac.kyoto_su.ise.tamadalab.bydi.extractor.Main <JARFILE>
+$ java -jar target/bydi-1.0-SNAPSHOT.jar extract <JARFILE>
 ```
 
 Then, we obtain two csv files (typically, before and after obfuscation).
 The differences are printed by the following command.
 
 ```sh
-$ java -jar target/bydi-1.0-SNAPSHOT.jar <CSV1|JAR1> <CSV2|JAR1>
+$ java -jar target/bydi-1.0-SNAPSHOT.jar compare <CSV1|JAR1> <CSV2|JAR1>
 ```
 
 `bydi` prints the bytecode distance between the two methods.

@@ -1,4 +1,4 @@
-package jp.ac.kyoto_su.ise.tamadalab.bydi.extractor;
+package jp.ac.kyoto_su.ise.tamadalab.bydi.extractors;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.InstructionList;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.comparator.DataPoolBuilder;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.comparators.DataPoolBuilder;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.DataStore;
 
 public class OpcodeExtractor implements DataPoolBuilder {
