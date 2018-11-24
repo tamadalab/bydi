@@ -1,16 +1,26 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.utils;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.MethodInfo;
-
 public class TypeUtils {
     private static final TypeUtils INSTANCE = new TypeUtils();
+    private Map<String, String> TYPEMAP = new HashMap<>();
 
     private TypeUtils(){
+        TYPEMAP.put("boolean", "Z");
+        TYPEMAP.put("byte",    "B");
+        TYPEMAP.put("char",    "C");
+        TYPEMAP.put("short",   "S");
+        TYPEMAP.put("int",     "I");
+        TYPEMAP.put("long",    "J");
+        TYPEMAP.put("double",  "D");
+        TYPEMAP.put("float",   "F");
+        TYPEMAP.put("void",    "V");
+        TYPEMAP.put("",        "");
     }
 
     public static String toDescriptor(String sourceFormOfReturnType, String[] sourceFormOfArguments){
@@ -33,32 +43,18 @@ public class TypeUtils {
     }
 
     private String convert(String sourceForm){
-        if(Objects.equals("int", sourceForm))
-            return "I";
-        else if(Objects.equals("double", sourceForm))
-            return "D";
-        else if(Objects.equals("float", sourceForm))
-            return "F";
-        else if(Objects.equals("boolean", sourceForm))
-            return "Z";
-        else if(Objects.equals("long", sourceForm))
-            return "J";
-        else if(Objects.equals("byte", sourceForm))
-            return "B";
-        else if(Objects.equals("char", sourceForm))
-            return "C";
-        else if(Objects.equals("short", sourceForm))
-            return "S";
+        return TYPEMAP.getOrDefault(sourceForm, toClassForm(sourceForm));
+    }
 
+    private String toClassForm(String className) {
         StringBuilder sb = new StringBuilder();
         sb.append("L");
-        sb.append(sourceForm.replace('.', '/'));
+        sb.append(className.replace('.', '/'));
         sb.append(";");
         return new String(sb);
     }
 
     private String dimension(int dimension){
-        StringBuilder sb = new StringBuilder();
         return IntStream.range(0, dimension)
             .mapToObj(index -> "[")
             .collect(Collectors.joining());

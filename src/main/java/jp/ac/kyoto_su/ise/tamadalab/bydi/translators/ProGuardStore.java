@@ -3,15 +3,18 @@ package jp.ac.kyoto_su.ise.tamadalab.bydi.translators;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jp.ac.kyoto_su.ise.tamadalab.bydi.comparators.StoreMapper;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.MethodInfo;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.Pair;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.utils.TypeUtils;
 
-public class ProGuardStore implements Store {
-    private TempStore store;
+public class ProGuardStore implements StoreMapper {
+    private Store store;
     private Map<NamePair, List<MethodInfoPair>> map;
 
     @Override
@@ -21,15 +24,16 @@ public class ProGuardStore implements Store {
 
     @Override
     public void storeItem(String line, boolean flag) {
-        boolean memberFlag = line.startsWith("    ") || line.startsWith("\t");
+        boolean memberFlag = line.startsWith("  ") || line.startsWith("\t");
         line = removeLastColonIfExists(line);
         store.storeItem(line.trim(), memberFlag);
     }
 
     @Override
     public void done() {
-        Map<String, String> map = constructClassNameMap(store.keys());
-        this.map = store.stream()
+        store.done();
+        Map<String, String> map = constructClassNameMap(((TempStore)store).keys());
+        this.map = ((TempStore)store).plainStream()
             .map(item -> convertToNewPair(item, map))
             .collect(Collectors.toMap(item -> item.map((a, b) -> a), item -> item.map((a, b) -> b)));
         store = new NullStore();
@@ -74,7 +78,11 @@ public class ProGuardStore implements Store {
     }
 
     private String between(String source, char firstChar, char endChar){
-        return source.substring(source.indexOf(firstChar) + 1, source.indexOf(endChar));
+        int startIndex = source.indexOf(firstChar);
+        int endIndex = source.indexOf(endChar);
+        if(startIndex >= 0 && endIndex > startIndex)
+            return source.substring(startIndex + 1, endIndex);
+        return source;
     }
 
     private NamePair constructNamePair(Pair<String, List<String>> pair) {
@@ -91,5 +99,30 @@ public class ProGuardStore implements Store {
         if(line.endsWith(":"))
             return line.substring(0, line.length() - 1);
         return line;
+    }
+
+    @Override
+    public Stream<MethodInfoPair> stream() {
+        return map.values().stream()
+                .flatMap(list -> list.stream());
+    }
+
+    @Override
+    public Optional<MethodInfo> map(MethodInfo info) {
+        return map.entrySet().stream()
+                .filter(entry -> match(entry.getKey(), info.className()))
+                .findFirst()
+                .flatMap(entry -> filter(info, entry.getValue()));
+    }
+
+    private Optional<MethodInfo> filter(MethodInfo info, List<MethodInfoPair> list) {
+        return list.stream()
+                .filter(pair -> pair.matchBefore(info))
+                .map(pair -> pair.map((before, after) -> after))
+                .findFirst();
+    }
+
+    private boolean match(NamePair pair, String className) {
+        return pair.test((before, after) -> Objects.equals(before, className));
     }
 }

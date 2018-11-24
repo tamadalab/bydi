@@ -1,0 +1,2 @@
+jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass -> jp.ac.kyoto_su.ise.tamadalab.bydi.a
+    void sampleMethod(jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass,int) -> b

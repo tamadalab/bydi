@@ -27,8 +27,8 @@ public class ComparisonProcessor implements Processor {
     }
 
     private Mapper constructMapper(Arguments args) {
-        return new MapperFactory()
-                .build(args.get("mapper"));
+        return new MapperBuilder()
+                .build(args.get("mapper"), args.get("format", "null"));
     }
 
     private void printAll(List<DataPool> pools, DistanceCalculator calculator, Mapper mapper) {
@@ -53,8 +53,9 @@ public class ComparisonProcessor implements Processor {
     }
 
     private void print(Method data1, Method data2, double distance) {
-        System.out.printf("%s,%s,%s,%d,%d,%g%n", data1.className(), data1.methodName(), 
-                data1.signature(), data1.opcodes().length, data2.opcodes().length,
+        System.out.printf("%s,%s,%s,%s,%s,%s,%d,%d,%g%n", data1.className(), data1.methodName(), 
+                data1.signature(), data2.className(), data2.methodName(), data2.signature(),
+                data1.opcodes().length, data2.opcodes().length,
                 distance);
     }
     private DistanceCalculator buildDistanceCalculator(Arguments args) {
@@ -74,4 +75,8 @@ public class ComparisonProcessor implements Processor {
                 .collect(Collectors.toList());
     }
 
+    public static void main(String[] args) {
+        ComparisonProcessor processor = new ComparisonProcessor();
+        processor.run(args);
+    }
 }

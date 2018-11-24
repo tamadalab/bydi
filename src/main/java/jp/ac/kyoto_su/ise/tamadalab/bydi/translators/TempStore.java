@@ -17,7 +17,9 @@ public class TempStore implements Store {
         if(memberFlag) {
             lastClass.add(line.trim());
         }
-        map.put(line, lastClass = new ArrayList<>());
+        else{
+            map.put(line, lastClass = new ArrayList<>());
+        }
     }
 
     public List<String> get(String line) {
@@ -28,10 +30,15 @@ public class TempStore implements Store {
         return map.keySet().stream();
     }
 
-    public Stream<Pair<String, List<String>>> stream() {
+    public Stream<Pair<String, List<String>>> plainStream() {
         return map.entrySet()
                 .stream()
                 .map(entry -> new Pair<>(entry.getKey(), entry.getValue()));
+    }
+
+    @Override
+    public Stream<MethodInfoPair> stream() {
+        return Stream.empty();
     }
 
     @Override

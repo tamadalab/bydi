@@ -8,14 +8,19 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class Main {
-    public void run(String[] args) throws IOException {
-        Arguments arguments = new Arguments(args);
-        arguments.perform(arg -> perform(arg));
+import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Arguments;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.Processor;
+
+public class TranslationProcessor implements Processor {
+    @Override
+    public Arguments buildArguments() {
+        return new TranslatorArguments();
     }
 
-    private void perform(Arguments args) {
-        Optional<Translator> translator = new TranslatorBuilder().get(args.type());
+    @Override
+    public void perform(Arguments args) {
+        Optional<Translator> translator = args.get("format")
+                .flatMap(type -> new TranslatorBuilder().get(type));
         translator.ifPresent(t -> perform(t, args));
     }
 
@@ -27,13 +32,15 @@ public class Main {
     private void translate(String item, Translator translator, PrintWriter out) {
         try(Stream<String> stream = Files.lines(Paths.get(item))){
             translator.translate(stream, out);
+            out.flush();
         } catch(IOException e) {
             throw new InternalError(e);
         }
     }
 
     public static void main(String[] args) throws IOException {
-        Main translator = new Main();
+        TranslationProcessor translator = new TranslationProcessor();
         translator.run(args);
     }
+
 }

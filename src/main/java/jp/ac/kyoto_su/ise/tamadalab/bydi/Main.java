@@ -13,7 +13,13 @@ import jp.ac.kyoto_su.ise.tamadalab.bydi.cli.ProcessorBuilder;
 public class Main {
     public void run(String[] args) {
         List<String> newArgs = shift(args);
-        perform(new ProcessorBuilder().build(args[0]), newArgs);
+        perform(new ProcessorBuilder().build(findArgument(args)), newArgs);
+    }
+
+    private String findArgument(String[] args) {
+        if(args.length == 0)
+            return "help";
+        return args[0];
     }
 
     private void perform(Processor processor, List<String> args) {

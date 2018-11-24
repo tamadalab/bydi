@@ -23,7 +23,7 @@ public class Arguments {
     }
 
     public String get(String keyword, String defaultValue) {
-        return defaultValue;
+        return get(keyword).orElse(defaultValue);
     }
 
     public Stream<String> stream(){

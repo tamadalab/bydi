@@ -1,5 +1,7 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.translators;
 
+import java.util.stream.Stream;
+
 public interface Store {
     default void start() {
     }
@@ -11,4 +13,6 @@ public interface Store {
     void storeItem(String line, boolean memberFlag);
 
     void done();
+
+    Stream<MethodInfoPair> stream();
 }

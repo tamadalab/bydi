@@ -10,6 +10,7 @@ public class TranslatorBuilder {
     
     public TranslatorBuilder() {
         builders.put("proguard", () -> new ProGuardTranslator());
+        builders.put("yguard", () -> new YGuardTranslator());
     }
 
     public Optional<Translator> get(String key) {

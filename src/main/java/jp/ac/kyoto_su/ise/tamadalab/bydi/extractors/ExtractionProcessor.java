@@ -29,8 +29,8 @@ public class ExtractionProcessor implements Processor {
         .forEach(System.out::println);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         ExtractionProcessor extractor = new ExtractionProcessor();
-        extractor.perform(extractor.parse(args));
+        extractor.run(args);
     }
 }

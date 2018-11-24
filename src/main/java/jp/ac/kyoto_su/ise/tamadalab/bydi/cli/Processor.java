@@ -8,6 +8,14 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 public interface Processor {
+    default void run(String[] args) {
+        try{
+            perform(parse(args));
+        } catch(CmdLineException e) {
+            e.printStackTrace();
+        }
+    }
+
     default Arguments parse(List<String> args) throws CmdLineException {
         Arguments arguments = buildArguments();
         CmdLineParser parser = new CmdLineParser(arguments);
