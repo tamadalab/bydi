@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<allatori>
+  <mapping>
+    <class old="jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass" new="a">
+      <field old="thisFieldAreOmmitted" new="aa" />
+      <method old="sampleMethod(Ljp/ac/kyoto_su/ise/tamadalab/bydi/SampleClass;I)V" new="b" />
+      <method old="sample(Ljp/ac/kyoto_su/ise/tamadalab/bydi/SampleClass;I)V" new="sample" />
+    </class>
+  </mapping>
+</allatori>

@@ -1,6 +1,11 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.translators;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -8,97 +13,66 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.bcel.generic.Type;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import jp.ac.kyoto_su.ise.tamadalab.bydi.comparators.StoreMapper;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.MethodInfo;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.entities.Pair;
 import jp.ac.kyoto_su.ise.tamadalab.bydi.utils.TypeUtils;
 
 public class AllatoriStore implements StoreMapper {
-    private Store store;
-    private Map<NamePair, List<MethodInfoPair>> map;
+    private Map<NamePair, List<MethodInfoPair>> map = new HashMap<>();
+    private List<String> lines = new ArrayList<>();
+    private Map<String, String> classNameMap = new HashMap<>();
 
     @Override
     public void start() {
-        store = new TempStore();
     }
 
     @Override
     public void storeItem(String line, boolean flag) {
-        boolean memberFlag = line.startsWith("  ") || line.startsWith("\t");
-        line = removeLastColonIfExists(line);
-        store.storeItem(line.trim(), memberFlag);
+        if(line.startsWith("<class ")) {
+            Pair<String, String> pair = parseNamePair(line);
+            pair.perform((before, after) -> classNameMap.put(before, after));
+        }
+        lines.add(line);
+    }
+
+    Pair<String, String> parseNamePair(String line) {
+        String oldName = extract(line, "old=\"", "\"");
+        String newName = extract(line, "new=\"", "\"");
+        return new Pair<>(oldName, newName);
+    }
+
+    private String extract(String line, String start, String end) {
+        int startIndex = line.indexOf(start);
+        int endIndex = line.indexOf(end, startIndex + start.length() + 1);
+        return line.substring(startIndex + start.length(), endIndex);
     }
 
     @Override
     public void done() {
-        store.done();
-        Map<String, String> map = constructClassNameMap(((TempStore)store).keys());
-        this.map = ((TempStore)store).plainStream()
-            .map(item -> convertToNewPair(item, map))
-            .collect(Collectors.toMap(item -> item.map((a, b) -> a), item -> item.map((a, b) -> b)));
-        store = new NullStore();
+        try {
+            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+            parser.parse(constructStream(lines), new AllatoriMapping(map));
+            lines.clear();
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new InternalError(e);
+        }
+        System.out.printf("done: %d%n", map.size());
     }
 
-    private Pair<NamePair, List<MethodInfoPair>> convertToNewPair(Pair<String, List<String>> pair, Map<String, String> classNameMap){
-        NamePair namePair = constructNamePair(pair);
-        return new Pair<>(namePair,
-                          convertToMethodInfoPairList(namePair, pair.map((left, right) -> right), classNameMap));
-    }
-
-    private List<MethodInfoPair> convertToMethodInfoPairList(NamePair pair, List<String> list, Map<String, String> classNameMap){
-        return list.stream()
-            .map(line -> convertToMethodInfoPair(pair, line, classNameMap))
-            .collect(Collectors.toList());
-    }
-
-    private MethodInfoPair convertToMethodInfoPair(NamePair pair, String line, Map<String, String> classNameMap) {
-        String[] items = line.split(" -> ");
-        String returnType = items[0].substring(0, items[0].indexOf(" "));
-        String argumentTypes = between(items[0], '(', ')');
-        String oldMethodName = between(items[0], ' ', '(');
-        String newMethodName = items[1];
-        MethodInfo beforeInfo = new MethodInfo(pair.map((b, a) -> b), oldMethodName, constructSignature(returnType, argumentTypes));
-        MethodInfo afterInfo = new MethodInfo(pair.map((b, a) -> a), newMethodName, constructSignature(returnType, argumentTypes, classNameMap));
-        return new MethodInfoPair(beforeInfo, afterInfo);
-    }
-
-    private String constructSignature(String returnType, String argumentTypes, Map<String, String> map){
-        return constructSignature(map.getOrDefault(returnType, returnType),
-                                  Arrays.stream(argumentTypes.split(", ?"))
-                                  .map(arg -> map.getOrDefault(arg, arg))
-                                  .toArray(String[]::new));
-    }
-
-    private String constructSignature(String returnType, String argumentTypes){
-            return constructSignature(returnType, argumentTypes.split(", ?"));
-    }
-
-    private String constructSignature(String returnType, String[] argumentTypes){
-        return TypeUtils.toDescriptor(returnType, argumentTypes);
-    }
-
-    private String between(String source, char firstChar, char endChar){
-        int startIndex = source.indexOf(firstChar);
-        int endIndex = source.indexOf(endChar);
-        if(startIndex >= 0 && endIndex > startIndex)
-            return source.substring(startIndex + 1, endIndex);
-        return source;
-    }
-
-    private NamePair constructNamePair(Pair<String, List<String>> pair) {
-        String[] items = pair.map((left, right) -> left.split(" -> "));
-        return new NamePair(items[0], items[1]);
-    }
-
-    private Map<String, String> constructClassNameMap(Stream<String> stream){
-        return stream.map(line -> line.split(" -> "))
-                .collect(Collectors.toMap(items -> items[0], items -> items[1]));
-    }
-
-    private String removeLastColonIfExists(String line) {
-        if(line.endsWith(":"))
-            return line.substring(0, line.length() - 1);
-        return line;
+    private InputStream constructStream(List<String> lines) {
+        return new ByteArrayInputStream(lines.stream()
+                .collect(Collectors.joining("\r\n"))
+                .getBytes());
     }
 
     @Override
@@ -124,5 +98,55 @@ public class AllatoriStore implements StoreMapper {
 
     private boolean match(NamePair pair, String className) {
         return pair.test((before, after) -> Objects.equals(before, className));
+    }
+
+    private NamePair constructPair(Attributes attributes) {
+        return new NamePair(attributes.getValue("old"), attributes.getValue("new"));
+    }
+
+    private MethodInfoPair constructMethodInfoPair(NamePair pair, Attributes attributes) {
+        String beforeName = attributes.getValue("old");
+        String methodName = beforeName.substring(0, beforeName.indexOf('('));
+        String signature = beforeName.substring(beforeName.indexOf('('));
+        MethodInfo before = new MethodInfo(pair.map((b, a) -> b), methodName, signature);
+        MethodInfo after = new MethodInfo(pair.map((b, a) -> a), attributes.getValue("new"), updateSignatures(signature));
+        return new MethodInfoPair(before, after);
+    }
+
+    private String updateSignatures(String signature) {
+        Type[] types = Type.getArgumentTypes(signature);
+        String returnType = Type.getReturnType(signature).toString();
+
+        return TypeUtils.toDescriptor(classNameMap.getOrDefault(returnType, returnType),
+                Arrays.stream(types).map(type -> type.toString())
+                .map(type -> classNameMap.getOrDefault(type, type)).toArray(size -> new String[size]));
+    }
+
+    private class AllatoriMapping extends DefaultHandler {
+        private NamePair pair;
+        private List<MethodInfoPair> list = new ArrayList<>();
+        private Map<NamePair, List<MethodInfoPair>> map;
+
+        private AllatoriMapping(Map<NamePair, List<MethodInfoPair>> map) {
+            this.map = map;
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+            if(qName.equals("class")) {
+                pair = constructPair(attributes);
+            }
+            else if(qName.equals("method")) {
+                list.add(constructMethodInfoPair(pair, attributes));
+            }
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) {
+            if(qName.equals("class")) {
+                map.put(pair, list);
+                list = new ArrayList<>();
+            }
+        }
     }
 }
