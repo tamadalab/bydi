@@ -11,6 +11,8 @@ public class TranslatorBuilder {
     public TranslatorBuilder() {
         builders.put("proguard", () -> new ProGuardTranslator());
         builders.put("yguard", () -> new YGuardTranslator());
+        builders.put("zkm", () -> new ZKMTranslator());
+        builders.put("allatori", () -> new AllatoriTranslator());
     }
 
     public Optional<Translator> get(String key) {

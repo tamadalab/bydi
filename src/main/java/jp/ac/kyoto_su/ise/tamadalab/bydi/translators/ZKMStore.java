@@ -16,6 +16,11 @@ import jp.ac.kyoto_su.ise.tamadalab.bydi.utils.TypeUtils;
 public class ZKMStore implements StoreMapper {
     private Store store;
     private Map<NamePair, List<MethodInfoPair>> map;
+    private Part part = Part.Unknown;
+    
+    private static enum Part {
+        Unknown, Class, Source, Fields, Methods, Package, Comments;
+    }
 
     @Override
     public void start() {
@@ -25,15 +30,22 @@ public class ZKMStore implements StoreMapper {
     @Override
     public void storeItem(String line, boolean flag) {
         if(line.startsWith("Class:")) {
+            part = Part.Class;
             store.storeItem(stripModifiers(line.substring("Class: ".length())), false);
         }
-        else if(line.startsWith("\t\t")) {
+        else if(line.startsWith("Package"))      part = Part.Package;
+        else if(line.startsWith("//"))           part = Part.Comments;
+        else if(line.startsWith("\tSource:"))    part = Part.Source;
+        else if(line.startsWith("\tFieldsOf:"))  part = Part.Fields;
+        else if(line.startsWith("\tMethodsOf:")) part = Part.Methods;
+        else if(line.equals(""))                 part = Part.Unknown;
+        else if(line.startsWith("\t\t") && part == Part.Methods) {
             store.storeItem(stripModifiers(line.trim()), true);
         }
     }
 
     private static final List<String> MODIFIERS =
-            Arrays.asList("public", "private", "protected", "static", "final", "transient");
+            Arrays.asList("public", "private", "protected", "static", "final", "transient", "abstract");
 
     String stripModifiers(String declaration) {
         return Arrays.stream(declaration.split(" "))
@@ -54,21 +66,37 @@ public class ZKMStore implements StoreMapper {
     private Pair<NamePair, List<MethodInfoPair>> convertToNewPair(Pair<String, List<String>> pair, Map<String, String> classNameMap){
         NamePair namePair = constructNamePair(pair);
         return new Pair<>(namePair,
-                          convertToMethodInfoPairList(namePair, pair.map((left, right) -> right), classNameMap));
+                          convertToMemberPairList(namePair, pair.map((left, right) -> right), classNameMap));
     }
 
-    private List<MethodInfoPair> convertToMethodInfoPairList(NamePair pair, List<String> list, Map<String, String> classNameMap){
+    private List<MethodInfoPair> convertToMemberPairList(NamePair pair, List<String> list, Map<String, String> classNameMap) {
         return list.stream()
-            .map(line -> convertToMethodInfoPair(pair, line, classNameMap))
-            .collect(Collectors.toList());
+                .map(line -> convertToMemberPair(pair, line, classNameMap))
+                .collect(Collectors.toList());
     }
 
-    private MethodInfoPair convertToMethodInfoPair(NamePair pair, String line, Map<String, String> classNameMap) {
-        String[] items = line.split("\t=>\t");
+    private MethodInfoPair convertToMemberPair(NamePair pair, String line, Map<String, String> classNameMap) {
+        if(line.contains("\t=>\t")) {
+            return convertToMethodInfoPair(pair, line.split("\t=>\t"), classNameMap);
+        }
+        return buildNoChangedPair(pair, line.substring(0, line.indexOf("SignatureNotChanged")).trim(), classNameMap);
+    }
+
+    private MethodInfoPair buildNoChangedPair(NamePair pair, String line, Map<String, String> classNameMap) {
+        String returnType = line.substring(0, line.indexOf(' '));
+        String argumentTypes = between(line, '(', ')');
+        String methodName = between(line, ' ', '(');
+        MethodInfo before = new MethodInfo(pair.map((b, a) -> b), methodName, constructSignature(returnType, argumentTypes));
+        MethodInfo info = new MethodInfo(pair.map((b, a) -> a), methodName, constructSignature(returnType, argumentTypes, classNameMap));
+        return new MethodInfoPair(before, info);
+    }
+
+    private MethodInfoPair convertToMethodInfoPair(NamePair pair, String[] items, Map<String, String> classNameMap) {
+        System.out.printf("%s <%s>%n", pair.map((a, b) -> String.format("<%s, %s>", a, b)), Arrays.toString(items));
         String returnType = items[0].substring(0, items[0].indexOf(" "));
         String argumentTypes = between(items[0], '(', ')');
         String oldMethodName = between(items[0], ' ', '(');
-        String newMethodName = items[1];
+        String newMethodName = items[1].substring(0, items[1].indexOf('('));
         MethodInfo beforeInfo = new MethodInfo(pair.map((b, a) -> b), oldMethodName, constructSignature(returnType, argumentTypes));
         MethodInfo afterInfo = new MethodInfo(pair.map((b, a) -> a), newMethodName, constructSignature(returnType, argumentTypes, classNameMap));
         return new MethodInfoPair(beforeInfo, afterInfo);

@@ -17,7 +17,7 @@ public class ProGuardTranslatorTest {
 
     @Test
     public void testTranslate() throws Exception {
-        URL location = getClass().getResource("/resources/sample-mapping.proguard");
+        URL location = getClass().getResource("/resources/sample.proguard.mapping");
         StringWriter out = new StringWriter();
         try(Stream<String> stream = new BufferedReader(new InputStreamReader(location.openStream())).lines()) {
             translator.translate(stream, new PrintWriter(out));

@@ -1,0 +1,8 @@
+// Comments
+
+Class: public jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass	=>	a
+	FieldsOf: jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass
+		public static final thisFieldsAreOmmitted	=>	aa
+	MethodsOf: jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass
+		public void sampleMethod(jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass, int)	=>	b(jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass, int)
+		public void sample(jp.ac.kyoto_su.ise.tamadalab.bydi.SampleClass, int)	SignatureNotChanged
