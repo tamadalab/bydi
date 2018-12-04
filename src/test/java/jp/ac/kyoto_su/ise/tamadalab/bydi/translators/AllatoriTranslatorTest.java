@@ -1,7 +1,7 @@
 package jp.ac.kyoto_su.ise.tamadalab.bydi.translators;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 public class AllatoriTranslatorTest {
-    private Translator translator = new ZKMTranslator();
+    private Translator translator = new AllatoriTranslator();
 
     @Test
     public void testTranslate() throws Exception {

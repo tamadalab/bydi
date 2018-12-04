@@ -16,6 +16,8 @@ public class TranslatorBuilderTest {
     public void testTranslatorBuilder() {
         assertThat(builder.get("proguard").get(), is(instanceOf(ProGuardTranslator.class)));
         assertThat(builder.get("yguard").get(), is(instanceOf(YGuardTranslator.class)));
+        assertThat(builder.get("allatori").get(), is(instanceOf(AllatoriTranslator.class)));
+        assertThat(builder.get("zkm").get(), is(instanceOf(ZKMTranslator.class)));
         assertThat(builder.get("unknown"), is(Optional.empty()));
     }
 }

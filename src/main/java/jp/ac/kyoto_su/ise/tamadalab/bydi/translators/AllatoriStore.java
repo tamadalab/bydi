@@ -38,7 +38,7 @@ public class AllatoriStore implements StoreMapper {
 
     @Override
     public void storeItem(String line, boolean flag) {
-        if(line.startsWith("<class ")) {
+        if(line.trim().startsWith("<class ")) {
             Pair<String, String> pair = parseNamePair(line);
             pair.perform((before, after) -> classNameMap.put(before, after));
         }
@@ -66,7 +66,6 @@ public class AllatoriStore implements StoreMapper {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new InternalError(e);
         }
-        System.out.printf("done: %d%n", map.size());
     }
 
     private InputStream constructStream(List<String> lines) {
@@ -116,10 +115,16 @@ public class AllatoriStore implements StoreMapper {
     private String updateSignatures(String signature) {
         Type[] types = Type.getArgumentTypes(signature);
         String returnType = Type.getReturnType(signature).toString();
-
+        
         return TypeUtils.toDescriptor(classNameMap.getOrDefault(returnType, returnType),
-                Arrays.stream(types).map(type -> type.toString())
-                .map(type -> classNameMap.getOrDefault(type, type)).toArray(size -> new String[size]));
+                toNewArguments(types));
+    }
+
+    private String[] toNewArguments(Type[] types) {
+        return Arrays.stream(types)
+                .map(type -> type.toString())
+                .map(type -> classNameMap.getOrDefault(type, type))
+                .toArray(size -> new String[size]);
     }
 
     private class AllatoriMapping extends DefaultHandler {
@@ -146,6 +151,7 @@ public class AllatoriStore implements StoreMapper {
             if(qName.equals("class")) {
                 map.put(pair, list);
                 list = new ArrayList<>();
+                pair = null;
             }
         }
     }
