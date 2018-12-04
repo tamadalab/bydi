@@ -22,7 +22,7 @@ public class ComparisonArguments extends Arguments {
             return Optional.of(algorithm);
         }
         else if(Objects.equals(keyword, "mapper")) {
-            return Optional.of(mapping);
+            return Optional.ofNullable(mapping);
         }
         else if(Objects.equals(keyword, "format")) {
             return Optional.of(format);

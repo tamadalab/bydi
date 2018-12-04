@@ -12,7 +12,6 @@ public class DefaultDataPoolBuilder implements DataPoolBuilder {
 
     @Override
     public Optional<DataPool> extract(String path) {
-        System.out.printf("path %s%n", path);
         if(path.endsWith(".csv")) {
             return parser.extract(path);
         }

@@ -48,7 +48,7 @@ public class ComparisonProcessor implements Processor {
     }
 
     private void printNotFound(Method data) {
-        System.out.printf("%s,%s,%s,%d,,,not found%n", data.className(), data.methodName(),
+        System.out.printf("%s,%s,%s,,,,%d,,,not found%n", data.className(), data.methodName(),
                 data.signature(), data.opcodes().length);
     }
 

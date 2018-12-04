@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import jp.ac.kyoto_su.ise.tamadalab.bydi.translators.ProGuardStore;
+import jp.ac.kyoto_su.ise.tamadalab.bydi.translators.YGuardStore;
 
 public class MapperBuilder {
     private Map<String, Supplier<StoreMapper>> mappers = new HashMap<>();
@@ -17,6 +18,7 @@ public class MapperBuilder {
     public MapperBuilder() {
         mappers.put("bydi", () -> new DefaultMapper());
         mappers.put("proguard", () -> new ProGuardStore());
+        mappers.put("yguard", () -> new YGuardStore());
     }
 
     public Mapper build(Optional<String> mapperName, String format) {
@@ -25,7 +27,6 @@ public class MapperBuilder {
     }
 
     private Mapper build(String name, String format) {
-        System.out.printf("build(%s, %s)%n", name, format);
         Optional<StoreMapper> mapper = Optional.of(mappers.get(format).get());
         mapper.ifPresent(storeMapper -> construct(storeMapper, name));
         return mapper.map(instance -> (Mapper)instance)
